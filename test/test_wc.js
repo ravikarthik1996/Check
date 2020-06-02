@@ -1,6 +1,6 @@
 //install keyethereum:npm install keythereum
 //install ethereumjs-tx: npm install ethereumjs-tx
-//update your node default account in addr_list.json and change the node_10 to your name 
+//update your node default account in addr_list.json and change the sender_node to your name
 
 // Interaction with Ethereum
 var Web3 = require('web3');
@@ -50,7 +50,7 @@ console.log('Private key: '+privateKey + "\n");
 // testing
 var test_node="node_82";
 var test_node1="node_82_1";
-var input1=09973573883;
+var sender_node="node_10";
 var input=1234567890;
 var [result,hash]=checkImage(input, getAddress(test_node));
 var [result1,hash1]=checkImage(input, getAddress(test_node1));
@@ -69,17 +69,17 @@ console.log("hash1: "+ hash1+ "\n");
 
 //send the signed transaction
 if (result.toString()=='true'){
-        send_signed_transaction(privateKey,hash,getAddress(test_node),getAddress("node_10"),contractAddress);
+        send_signed_transaction(privateKey,hash,getAddress(test_node),getAddress(sender_node),contractAddress);
 }
 else{
-	console.log("No transaction receipt");
+	console.log("No transaction receipt for "+ getAddress(test_node));
 }
 
 if (result1.toString()=='true'){
-        send_signed_transaction(privateKey,hash,getAddress(test_node),getAddress("node_10"),contractAddress);
+        send_signed_transaction(privateKey,hash1,getAddress(test_node1),getAddress(sender_node),contractAddress);
 }
 else{
-        console.log("No transaction receipt");
+        console.log("No transaction receipt for " + getAddress(test_node1));
 }
 
 //============function===========================================================================================
@@ -102,7 +102,7 @@ function send_signed_transaction(privkey, hashval, receiver, sender, contractAdd
                 from: sender,
                 to: contractAddr,
                 gas: 0x5210, //21008
-		gasPrice: gasprice,
+//		gasPrice: gasprice,
                 value: '0x'+web3.toWei(0.001, "ether"),
 //		data: contract.methods.transfer(receiver, 1).encodeABI()
 		chainId: 0x2A //network id 42
