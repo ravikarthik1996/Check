@@ -1379,12 +1379,12 @@
     "42": {
       "events": {},
       "links": {},
-      "address": "0x2Fc22c3036Fd1Ff5faf7B883bD4Bc7d9069046f3",
-      "transactionHash": "0x41fc604c163e88efe7681e7d3ed18e6f587a4817cfa5a51f5b926bbb0f588489"
+      "address": "0x11C03737037BBA546C7fCc70c707123797761509",
+      "transactionHash": "0x629107d45d70f535f2acd6779e19d5bd518432abefda4cc563e4408181293a05"
     }
   },
   "schemaVersion": "3.1.0",
-  "updatedAt": "2020-05-26T16:41:31.942Z",
+  "updatedAt": "2020-06-05T01:40:01.595Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

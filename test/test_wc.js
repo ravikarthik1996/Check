@@ -5,7 +5,7 @@
 // Interaction with Ethereum
 var Web3 = require('web3');
 var web3 = new Web3();
-//var Accounts = require('web3-eth-accounts');
+var Accounts = require('web3-eth-accounts');
 var keythereum = require("keythereum");
 var fs=require('fs');
 //var Wallet = require('ethereumjs-wallet');
@@ -13,10 +13,10 @@ var fs=require('fs');
 
 // connect to the local node
 web3.setProvider(new web3.providers.HttpProvider('http://localhost:8042'));
-//var accounts = new Accounts('http://localhost:8042');
+var accounts = new Accounts('http://localhost:8042');
 
 // The contract that we are going to interact with
-var contractAddress ='0xBD7b7e18Fb4B5A289a72589cF1eae8463B4c0B30' ;
+var contractAddress ='0xe93F1407F4C7235b0678a0970873889Fb86AC3cf' ;
 
 // Load config data from SmartToken.json
 var config = require('../build/contracts/Check.json');
@@ -45,15 +45,24 @@ pwd=pwd.substr(1,pwd.length-4);
 var keyObject = keythereum.importFromFile(web3.eth.coinbase.toString(), datadir);
 var privateKey = keythereum.recover(pwd, keyObject);
 privateKey=privateKey.toString('hex');
-console.log('Private key: '+privateKey + "\n");
+//console.log('Private key: '+privateKey + "\n");
 
 // testing
 var test_node="node_82";
 var test_node1="node_82_1";
 var sender_node="node_10";
 var input=1234567890;
+var input1=1234567890;
+d_result=is_default(test_node);
+if (d_result.toString() == 'false'){
+	input=0;
+}
+d_result1=is_default(test_node1);
+if (d_result1.toString() == 'false'){
+	input1=0;
+}
 var [result,hash]=checkImage(input, getAddress(test_node));
-var [result1,hash1]=checkImage(input, getAddress(test_node1));
+var [result1,hash1]=checkImage(input1, getAddress(test_node1));
 
 //printing the outputs if input is correct
 console.log("Result: "+result);
@@ -68,14 +77,14 @@ hash1=hash1.substr(2);
 console.log("hash1: "+ hash1+ "\n");
 
 //send the signed transaction
-if (result.toString()=='true'){
+if ((result.toString()=='true') & (d_result.toString()=='true')){
         send_signed_transaction(privateKey,hash,getAddress(test_node),getAddress(sender_node),contractAddress);
 }
 else{
 	console.log("No transaction receipt for "+ getAddress(test_node));
 }
 
-if (result1.toString()=='true'){
+if ((result1.toString()=='true') & (d_result1.toString()=='true')){
         send_signed_transaction(privateKey,hash1,getAddress(test_node1),getAddress(sender_node),contractAddress);
 }
 else{
@@ -100,9 +109,9 @@ function send_signed_transaction(privkey, hashval, receiver, sender, contractAdd
         var rawtx={
 		nonce: accountNonce,
                 from: sender,
-                to: contractAddr,
+                to: receiver,
                 gas: 0x5210, //21008
-//		gasPrice: gasprice,
+		gasPrice: gasprice,
                 value: '0x'+web3.toWei(0.001, "ether"),
 //		data: contract.methods.transfer(receiver, 1).encodeABI()
 		chainId: 0x2A //network id 42
@@ -115,12 +124,27 @@ function send_signed_transaction(privkey, hashval, receiver, sender, contractAdd
 //        web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex')).on('receipt', console.log);
 	web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'), function(err, h1) {
 		if (!err)
-        		console.log(h1+ "\n"); //print transaction receipt
+        		console.log("Transaction receipt: "+h1+ "\n"); //print transaction receipt
 		else
         		console.log(err);
 	});
 }
 
+//check the address is default or not
+function is_default(node_n){
+        var d_accountlist = require('./default_account.json');
+	for (i = 1;i<=Object.keys(d_accountlist).length;i++){
+		var d =i;
+		//console.log(d_accountlist[d.toString()])
+        	if (getAddress(node_n)== d_accountlist[i.toString()]){
+			var ret=true;
+		}
+		else{
+			var ret=false;
+		}
+	}
+	return ret;
+}
 //getAddress function is to get the address of a node
 function getAddress(node_name){ 
         var addrlist = require('./addr_list.json');
@@ -135,8 +159,8 @@ function list_all() {
 }
 
 //checkImage function is used to interact with smart contract
-function checkImage(value, receiver){
-        var cret=contract.Checkimage(value, receiver); 
+function checkImage(input, receiver){
+        var cret=contract.Checkimage(input, receiver);
 //        console.log(cret);
         var valret=contract.checkimage(receiver); //get bool of checkimage variable
         console.log(receiver+"\t"+valret);

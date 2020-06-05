@@ -9,9 +9,13 @@ contract Check {
 
     function Checkimage(uint256  image, address recipient) public {
         var signimg = keccak256(image);
-        if ( signimg == originalimage ) {
+        if (originalimage == signimg ) {
             checkimage[recipient] = true;  
 	    signimage[recipient] = signimg;
+        }
+        else{
+            checkimage[recipient] = false;
+            signimage[recipient] = signimg;
         }
     }
 
