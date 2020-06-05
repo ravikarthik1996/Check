@@ -1,6 +1,8 @@
+//Before running this file do the following
 //install keyethereum:npm install keythereum
 //install ethereumjs-tx: npm install ethereumjs-tx
 //update your node default account in addr_list.json and change the sender_node to your name
+//update default_account.json file with default account of the node if you are sending transaction
 
 // Interaction with Ethereum
 var Web3 = require('web3');
